@@ -1,0 +1,286 @@
+/* === Variabel Global & Reset Dasar === */
+:root {
+    --font-datepicker: 'Manrope', sans-serif;
+
+    --datepicker-bg: #ffffff;
+    --datepicker-border-color: #e0e6ed;
+    --datepicker-shadow: 0 10px 30px rgba(50, 70, 90, 0.12), 0 4px 10px rgba(50, 70, 90, 0.08);
+
+    --header-bg: #f8f9fa; /* Latar header sedikit beda */
+    --text-primary: #334155;  /* Biru keabuan gelap */
+    --text-secondary: #64748b; /* Abu-abu medium */
+    --text-disabled: #cbd5e1;  /* Abu-abu terang untuk hari non-aktif */
+    --text-on-accent: #ffffff;
+
+    --accent-color: #2563eb;        /* Biru cerah */
+    --accent-color-hover: #1d4ed8;  /* Biru lebih gelap */
+    --today-indicator-color: #f59e0b; /* Oranye untuk hari ini */
+    --day-hover-bg: #eff6ff;        /* Biru sangat muda untuk hover hari */
+
+    --border-radius-md: 8px;
+    --border-radius-sm: 6px;
+    --border-radius-circle: 50%;
+
+    --spacing-unit: 4px; /* Unit spasi dasar, kelipatan digunakan */
+
+    --transition-main: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+}
+
+body {
+    font-family: var(--font-datepicker);
+    background-color: #e2e8f0; /* Latar body abu-abu lembut */
+    color: var(--text-primary);
+    line-height: 1.5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: calc(var(--spacing-unit) * 5); /* 20px */
+}
+
+/* === Wrapper Datepicker === */
+.datepicker-wrapper {
+    /* Untuk demo, bisa diberi perspektif jika ingin animasi 3D nantinya */
+}
+
+/* === Kontainer Datepicker Utama === */
+.datepicker-container {
+    width: 100%;
+    max-width: 360px; /* Lebar ideal untuk datepicker */
+    background-color: var(--datepicker-bg);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--datepicker-shadow);
+    overflow: hidden; /* Menjaga semua elemen tetap di dalam */
+    display: flex;
+    flex-direction: column;
+}
+
+/* === Header Datepicker === */
+.datepicker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: calc(var(--spacing-unit) * 3) calc(var(--spacing-unit) * 4); /* 12px 16px */
+    background-color: var(--header-bg);
+    border-bottom: 1px solid var(--datepicker-border-color);
+}
+
+.nav-button {
+    background: none;
+    border: none;
+    padding: var(--spacing-unit); /* 4px */
+    cursor: pointer;
+    color: var(--text-secondary);
+    border-radius: var(--border-radius-sm);
+    transition: var(--transition-main);
+    display: inline-flex; /* Untuk alignment SVG */
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-button:hover {
+    background-color: var(--day-hover-bg);
+    color: var(--accent-color);
+}
+
+.nav-button svg {
+    width: calc(var(--spacing-unit) * 5); /* 20px */
+    height: calc(var(--spacing-unit) * 5);
+}
+
+.current-month-year {
+    font-size: 1rem; /* 16px */
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    gap: var(--spacing-unit); /* 4px antara bulan dan tahun */
+}
+.current-month-year .month {
+    /* Styling spesifik jika perlu */
+}
+.current-month-year .year {
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+/* === Body Datepicker (Nama Hari & Grid Tanggal) === */
+.datepicker-body {
+    padding: calc(var(--spacing-unit) * 3) calc(var(--spacing-unit) * 4); /* 12px 16px */
+}
+
+.day-names {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 7 kolom sama lebar */
+    gap: var(--spacing-unit); /* 4px */
+    margin-bottom: calc(var(--spacing-unit) * 2); /* 8px */
+}
+
+.day-name {
+    font-size: 0.75rem; /* 12px */
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-align: center;
+    padding: var(--spacing-unit) 0; /* 4px */
+}
+
+.days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 7 kolom sama lebar */
+    gap: var(--spacing-unit); /* 4px */
+}
+
+.day {
+    font-family: var(--font-datepicker);
+    background: none;
+    border: 1px solid transparent; /* Border transparan untuk konsistensi ukuran */
+    padding: 0; /* Padding dihandle oleh flex di dalam atau line-height */
+    font-size: 0.875rem; /* 14px */
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+    border-radius: var(--border-radius-circle); /* Bulat */
+    aspect-ratio: 1 / 1; /* Membuat sel hari menjadi persegi/lingkaran */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-main);
+    position: relative; /* Untuk indikator 'today' */
+}
+
+.day:hover:not(.selected):not(.disabled) {
+    background-color: var(--day-hover-bg);
+    border-color: var(--day-hover-bg);
+    color: var(--accent-color-hover);
+}
+.day:focus-visible { /* Styling untuk aksesibilitas keyboard */
+    outline: 2px solid var(--accent-color);
+    outline-offset: 1px;
+}
+
+
+.day.prev-month-day,
+.day.next-month-day {
+    color: var(--text-disabled);
+    font-weight: 400;
+}
+.day.prev-month-day:hover,
+.day.next-month-day:hover {
+    background-color: transparent; /* Tidak ada hover khusus untuk hari non-bulan ini */
+    color: var(--text-disabled);
+}
+
+
+.day.today {
+    /* Indikator 'today' bisa berupa titik di bawah atau border khusus */
+    /* font-weight: 800; */
+    /* color: var(--today-indicator-color); */
+    /* border: 1px solid var(--today-indicator-color); */
+}
+.day.today::after { /* Titik kecil di bawah angka untuk indikasi hari ini */
+    content: '';
+    position: absolute;
+    bottom: calc(var(--spacing-unit) * 1.25); /* 5px */
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(var(--spacing-unit) * 0.75); /* 3px */
+    height: calc(var(--spacing-unit) * 0.75);
+    background-color: var(--today-indicator-color);
+    border-radius: 50%;
+}
+.day.today.selected::after { /* Sembunyikan titik jika hari ini juga terpilih */
+    display: none;
+}
+
+
+.day.selected {
+    background-color: var(--accent-color);
+    color: var(--text-on-accent);
+    border-color: var(--accent-color);
+    font-weight: 700;
+}
+.day.selected:hover {
+    background-color: var(--accent-color-hover);
+    border-color: var(--accent-color-hover);
+}
+
+/* === Footer Datepicker === */
+.datepicker-footer {
+    display: flex;
+    justify-content: space-between; /* Atau flex-end jika hanya satu tombol */
+    padding: calc(var(--spacing-unit) * 3) calc(var(--spacing-unit) * 4); /* 12px 16px */
+    border-top: 1px solid var(--datepicker-border-color);
+}
+
+.action-button {
+    font-family: var(--font-datepicker);
+    font-size: 0.8125rem; /* 13px */
+    font-weight: 600;
+    padding: calc(var(--spacing-unit) * 1.5) calc(var(--spacing-unit) * 3); /* 6px 12px */
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    transition: var(--transition-main);
+    border: 1px solid transparent;
+}
+
+.action-button.today-button {
+    background-color: var(--day-hover-bg);
+    color: var(--accent-color);
+    border-color: var(--day-hover-bg);
+}
+.action-button.today-button:hover {
+    background-color: var(--accent-color);
+    color: var(--text-on-accent);
+    border-color: var(--accent-color);
+}
+
+.action-button.clear-button {
+    background-color: transparent;
+    color: var(--text-secondary);
+    border-color: var(--datepicker-border-color);
+}
+.action-button.clear-button:hover {
+    background-color: #fee2e2; /* Merah muda lembut untuk 'clear' hover */
+    color: #ef4444; /* Merah */
+    border-color: #fee2e2;
+}
+
+
+/* === Responsif === */
+@media (max-width: 400px) { /* Penyesuaian untuk layar sangat kecil */
+    .datepicker-wrapper {
+        width: 100%;
+        padding: var(--spacing-unit); /* 4px */
+    }
+    .datepicker-container {
+        max-width: none; /* Mengisi wrapper */
+        /* box-shadow: none; */ /* Hilangkan shadow jika terlalu mepet */
+    }
+    .datepicker-header, .datepicker-body, .datepicker-footer {
+        padding: calc(var(--spacing-unit) * 2.5) calc(var(--spacing-unit) * 3); /* 10px 12px */
+    }
+    .current-month-year {
+        font-size: 0.9rem; /* 14.4px */
+    }
+    .day-name {
+        font-size: 0.6875rem; /* 11px */
+    }
+    .day {
+        font-size: 0.8125rem; /* 13px */
+    }
+    .day.today::after { /* Perkecil indikator titik */
+        bottom: calc(var(--spacing-unit) * 0.75); /* 3px */
+        width: calc(var(--spacing-unit) * 0.5); /* 2px */
+        height: calc(var(--spacing-unit) * 0.5);
+    }
+    .action-button {
+        font-size: 0.75rem; /* 12px */
+        padding: var(--spacing-unit) calc(var(--spacing-unit) * 2); /* 4px 8px */
+    }
+}
